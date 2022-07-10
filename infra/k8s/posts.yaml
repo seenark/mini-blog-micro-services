@@ -1,0 +1,55 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name:  posts
+  namespace: prod
+  labels:
+    app:  posts
+spec:
+  selector:
+    matchLabels:
+      app: posts
+  replicas: 1
+  strategy:
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app:  posts
+    spec:
+      containers:
+      - name:  posts
+        image:  seenark/posts:latest
+        imagePullPolicy: Never # for k3d imported image
+        resources:
+          requests:
+            cpu: 100m
+            memory: 100Mi
+          limits:
+            cpu: 100m
+            memory: 100Mi
+        ports:
+        - containerPort:  4000
+          name:  posts
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: posts
+  namespace: prod
+spec:
+  selector:
+    app: posts
+  type: NodePort
+  ports:
+  - name: posts
+    protocol: TCP
+    port: 4000
+    targetPort: 4000
+    # If you set the `spec.type` field to `NodePort` and you want a specific port number,
+    # you can specify a value in the `spec.ports[*].nodePort` field.
+    nodePort: 30040  
