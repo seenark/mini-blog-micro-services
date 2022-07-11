@@ -1,4 +1,6 @@
+import { TPostEnv } from "./env-validate"
 import { Controller, Get } from "@nestjs/common"
+import { ConfigService } from "@nestjs/config"
 import { PostsService } from "./posts.service"
 
 @Controller()

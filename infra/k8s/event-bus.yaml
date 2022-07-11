@@ -1,14 +1,14 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name:  posts
+  name:  event-bus
   namespace: prod
   labels:
-    app:  posts
+    app:  event-bus
 spec:
   selector:
     matchLabels:
-      app: posts
+      app: event-bus
   replicas: 1
   strategy:
     rollingUpdate:
@@ -18,12 +18,16 @@ spec:
   template:
     metadata:
       labels:
-        app:  posts
+        app:  event-bus
     spec:
+      # initContainers:
+        # Init containers are exactly like regular containers, except:
+          # - Init containers always run to completion.
+          # - Each init container must complete successfully before the next one starts.
       containers:
-      - name:  posts
-        image:  seenark/posts:latest
-        imagePullPolicy: Never # for k3d imported image
+      - name:  event-bus
+        image:  seenark/event-bus
+        imagePullPolicy: Never
         resources:
           requests:
             cpu: 100m
@@ -32,24 +36,28 @@ spec:
             cpu: 100m
             memory: 100Mi
         ports:
-        - containerPort:  4000
-          name:  posts
-
+        - containerPort:  4005
+          name:  event-bus
+      restartPolicy: Always 
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: posts
+  name: event-bus
   namespace: prod
 spec:
   selector:
-    app: posts
+    app: event-bus
   type: ClusterIP
+  sessionAffinity: None
+  sessionAffinityConfig:
+    clientIP:
+      timeoutSeconds: 10800
   ports:
-  - name: posts
+  - name: event-bus
     protocol: TCP
-    port: 4000
-    targetPort: 4000
+    port: 4005
+    targetPort: 4005
     # If you set the `spec.type` field to `NodePort` and you want a specific port number,
     # you can specify a value in the `spec.ports[*].nodePort` field.
-    # nodePort: 30040  
+    # nodePort: 4005
