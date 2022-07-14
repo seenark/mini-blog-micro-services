@@ -1,5 +1,8 @@
 import axios from "axios";
+import { useAtom } from "jotai";
+import getConfig from "next/config";
 import { FormEvent, useCallback, useState } from "react";
+import { postsUrlAtom } from "../pages";
 
 interface ICreatePostProps {
 }
@@ -7,15 +10,16 @@ interface ICreatePostProps {
 const CreatePost: React.FunctionComponent<ICreatePostProps> = (props) => {
 
     const [title, setTitle] = useState("")
-
+    const [postsUrl] = useAtom(postsUrlAtom)
+    // const { publicRuntimeConfig } = getConfig()
     const onSubmit = useCallback(async (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault()
-        const url = `http://localhost:4000/post`
+        const url = `${postsUrl}/post`
         const res = await axios.post(url, {
             title
         })
         setTitle("")
-    }, [title])
+    }, [postsUrl, title])
 
     return (
         <form className="flex flex-col gap-2" onSubmit={onSubmit}>

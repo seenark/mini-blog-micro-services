@@ -22,8 +22,11 @@ spec:
     spec:
       containers:
       - name:  posts
-        image:  seenark/posts:latest
-        imagePullPolicy: Never # for k3d imported image
+        image:  hadesgod/posts:latest
+        # imagePullPolicy: Never # for k3d imported image
+        envFrom:
+          - configMapRef:
+              name: blog-config
         resources:
           requests:
             cpu: 100m
@@ -48,7 +51,7 @@ spec:
   ports:
   - name: posts
     protocol: TCP
-    port: 4000
+    port: 80
     targetPort: 4000
     # If you set the `spec.type` field to `NodePort` and you want a specific port number,
     # you can specify a value in the `spec.ports[*].nodePort` field.

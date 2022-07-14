@@ -1,5 +1,8 @@
 import axios from 'axios';
+import { useAtom } from 'jotai';
+import getConfig from 'next/config';
 import * as React from 'react';
+import { commentsUrlAtom } from '../pages';
 
 interface ICommentCreateProps {
     postId:string
@@ -7,15 +10,16 @@ interface ICommentCreateProps {
 
 const CommentCreate: React.FunctionComponent<ICommentCreateProps> = ({postId}) => {
   const [content, setContent] = React.useState("")
-  
+  // const { publicRuntimeConfig } = getConfig() 
+  const [commentsUrl] = useAtom(commentsUrlAtom)
   const onSubmit = React.useCallback(async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    const url = `http://localhost:4001/post/${postId}/comments`
+    const url = `${commentsUrl}/post/${postId}/comments`
     const res = await axios.post(url, {
       content
     })
     setContent("")
-  }, [content, postId])
+  }, [commentsUrl, content, postId])
 
   return (
     <div>

@@ -1,0 +1,62 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name:  comments
+  namespace: prod
+  labels:
+    app:  comments
+spec:
+  selector:
+    matchLabels:
+      app: comments
+  replicas: 1
+  strategy:
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app:  comments
+    spec:
+      # initContainers:
+        # Init containers are exactly like regular containers, except:
+          # - Init containers always run to completion.
+          # - Each init container must complete successfully before the next one starts.
+      containers:
+      - name:  comments
+        image:  hadesgod/comments
+        resources:
+          requests:
+            cpu: 100m
+            memory: 100Mi
+          limits:
+            cpu: 100m
+            memory: 100Mi
+        envFrom:
+          - configMapRef:
+              name: blog-config
+        ports:
+        - containerPort:  4001
+          name:  comments
+      restartPolicy: Always 
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: comments
+  namespace: prod
+spec:
+  selector:
+    app: comments
+  type: ClusterIP
+  ports:
+  - name: comments
+    protocol: TCP
+    port: 80
+    targetPort: 4001
+    # If you set the `spec.type` field to `NodePort` and you want a specific port number,
+    # you can specify a value in the `spec.ports[*].nodePort` field.
+    # nodePort: 4001

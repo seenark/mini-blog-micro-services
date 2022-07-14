@@ -1,0 +1,61 @@
+apiVersion: skaffold/v2beta29
+kind: Config
+deploy:
+  kubectl:
+    manifests:
+      - "./infra/k8s/namespace.yaml"
+      - "./infra/k8s/*"
+    defaultNamespace: prod
+build:
+  local:
+    push: false
+  artifacts:
+    - image: hadesgod/client 
+      context: "./blog"
+      docker:
+        dockerfile: Dockerfile
+      sync:
+        manual:
+          - dest: . 
+            src: "**/*.tsx"
+    - image: hadesgod/posts 
+      context: "./blog-services"
+      docker:
+        dockerfile: apps/posts/Dockerfile
+      sync:
+        manual:
+          - dest: "/usr/src/app"
+            src: "apps/posts/src/**/*.ts"
+    - image: hadesgod/comments 
+      context: "./blog-services"
+      docker:
+        dockerfile: apps/comments/Dockerfile
+      sync:
+        manual:
+          - dest: . 
+            src: "apps/comments/src/**/*.ts"
+    - image: hadesgod/moderation 
+      context: "./blog-services"
+      docker:
+        dockerfile: apps/moderation/Dockerfile
+      sync:
+        manual:
+          - dest: . 
+            src: "apps/moderation/src/**/*.ts"
+    - image: hadesgod/query 
+      context: "./blog-services"
+      docker:
+        dockerfile: apps/query/Dockerfile
+      sync:
+        manual:
+          - dest: . 
+            src: "apps/query/src/**/*.ts"
+    - image: hadesgod/event-bus 
+      context: "./blog-services"
+      docker:
+        dockerfile: apps/event-bus/Dockerfile
+      sync:
+        manual:
+          - dest: . 
+            src: "apps/event-bus/src/**/*.ts"
+  

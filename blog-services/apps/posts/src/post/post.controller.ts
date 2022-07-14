@@ -1,7 +1,14 @@
 import { TPostEnv } from "./../env-validate"
 import { ConfigService } from "@nestjs/config"
 import { IEvent } from "@app/events"
-import { Body, Controller, Get, Post } from "@nestjs/common"
+import {
+  Body,
+  Controller,
+  Get,
+  HttpCode,
+  HttpStatus,
+  Post,
+} from "@nestjs/common"
 import axios from "axios"
 import { PostService } from "./post.service"
 
@@ -17,6 +24,7 @@ export class PostController {
   }
 
   @Post()
+  @HttpCode(HttpStatus.CREATED)
   async createPost(@Body("title") title: string) {
     const data = this.postsService.createPost(title)
 

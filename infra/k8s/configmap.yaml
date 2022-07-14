@@ -1,0 +1,24 @@
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: blog-config
+  namespace: prod
+data:
+  CLIENT_URL: http://client
+  POSTS_URL: http://posts
+  COMMENTS_URL: http://comments
+  QUERY_URL: http://query
+  MODERATION_URL: http://moderation
+  EVENT_BUS_URL: http://event-bus
+  
+
+---
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: api-config
+  namespace: prod
+data:
+  POSTS_API_URL: http://posts.rustaship.cloudns.ph
+  COMMENTS_API_URL: http://comments.rustaship.cloudns.ph
+  QUERY_API_URL: http://query.rustaship.cloudns.ph

@@ -1,10 +1,13 @@
 import { ICommentEvent, IEvent } from "@app/events"
 import { Body, Controller, Post } from "@nestjs/common"
+import { ConfigService } from "@nestjs/config"
 import axios from "axios"
+import { TCommentsEnv } from "../env-validate"
 import { commentsByPostId } from "../post/comments.repository"
 
 @Controller("events")
 export class EventsController {
+  constructor(private readonly config: ConfigService<TCommentsEnv>) {}
   @Post()
   async receiveEvent(@Body() event: IEvent) {
     console.log("RCVD event", event.type)
@@ -25,7 +28,7 @@ export class EventsController {
           status: data.status,
         },
       }
-      await axios.post("http://localhost:4005/events", newEvent)
+      await axios.post(`${this.config.get("EVENT_BUS_URL")}/events`, newEvent)
     }
     return {}
   }

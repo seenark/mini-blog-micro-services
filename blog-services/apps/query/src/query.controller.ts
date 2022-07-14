@@ -5,7 +5,7 @@ import { QueryService } from "./query.service"
 export class QueryController {
   constructor(private readonly queryService: QueryService) {}
 
-  @Get()
+  @Get("health")
   getHello(): string {
     return this.queryService.getHello()
   }

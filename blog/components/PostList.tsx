@@ -1,5 +1,9 @@
 import axios from "axios";
+import { useAtom } from "jotai";
+import { GetStaticProps } from "next";
+import getConfig from "next/config";
 import { useCallback, useEffect, useState } from "react";
+import { queryUrlAtom } from "../pages";
 import CommentCreate from "./CommentCreate";
 import CommentList, { IComment } from "./CommentList";
 
@@ -16,13 +20,14 @@ interface IPostListProps {
 const PostList: React.FunctionComponent<IPostListProps> = (props) => {
 
     const [posts, setPosts] = useState<TPosts>({})
-
+    // const { publicRuntimeConfig } = getConfig()
+    const [queryUrl] = useAtom(queryUrlAtom)
     const fetchPosts = useCallback(async () => {
-        const url = `http://localhost:4002/post`
+        const url = `${queryUrl}/post`
         const res = await axios.get<TPosts>(url)
         console.log(res.data)
         setPosts(res.data)
-    }, [])
+    }, [queryUrl])
 
     useEffect(() => {
         (async () => {

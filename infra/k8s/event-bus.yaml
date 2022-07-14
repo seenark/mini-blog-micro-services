@@ -20,14 +20,9 @@ spec:
       labels:
         app:  event-bus
     spec:
-      # initContainers:
-        # Init containers are exactly like regular containers, except:
-          # - Init containers always run to completion.
-          # - Each init container must complete successfully before the next one starts.
       containers:
       - name:  event-bus
-        image:  seenark/event-bus
-        imagePullPolicy: Never
+        image:  hadesgod/event-bus
         resources:
           requests:
             cpu: 100m
@@ -35,6 +30,18 @@ spec:
           limits:
             cpu: 100m
             memory: 100Mi
+        envFrom:
+          - configMapRef:
+              name: blog-config
+        # env:
+          # - name: POSTS_URL
+          #   value: http://posts:4000
+          # - name: COMMENTS_URL
+          #   value: http://comments:4001
+          # - name: QUERY_URL
+          #   value: http://query:4002
+          # - name: MODERATION_URL
+          #   value: http://moderation:4003
         ports:
         - containerPort:  4005
           name:  event-bus
@@ -49,14 +56,10 @@ spec:
   selector:
     app: event-bus
   type: ClusterIP
-  sessionAffinity: None
-  sessionAffinityConfig:
-    clientIP:
-      timeoutSeconds: 10800
   ports:
   - name: event-bus
     protocol: TCP
-    port: 4005
+    port: 80
     targetPort: 4005
     # If you set the `spec.type` field to `NodePort` and you want a specific port number,
     # you can specify a value in the `spec.ports[*].nodePort` field.

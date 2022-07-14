@@ -1,0 +1,11 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: selfsigned-cert
+  namespace: cert-manager
+spec:
+  dnsNames:
+   - posts.blog
+  secretName: selfsigned-cert-tls
+  issuerRef: 
+    name: self-sign-issuer

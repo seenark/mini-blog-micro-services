@@ -5,8 +5,8 @@ import { CommentsService } from "./comments.service"
 export class CommentsController {
   constructor(private readonly commentsService: CommentsService) {}
 
-  @Get()
-  getHello(): string {
-    return this.commentsService.getHello()
+  @Get("health")
+  health() {
+    return "OK"
   }
 }

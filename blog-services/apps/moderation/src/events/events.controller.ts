@@ -1,9 +1,12 @@
 import { ICommentEvent, IEvent } from "@app/events"
 import { Body, Controller, Post } from "@nestjs/common"
+import { ConfigService } from "@nestjs/config"
 import axios from "axios"
+import { TModerationEnv } from "../env-validatiion"
 
 @Controller("events")
 export class EventsController {
+  constructor(private readonly config: ConfigService<TModerationEnv>) {}
   @Post()
   async receiveEvent(@Body() event: IEvent) {
     if (event.type === "CommentCreated") {
@@ -18,7 +21,10 @@ export class EventsController {
           content: data.content,
         },
       }
-      const res = await axios.post("http://localhost:4005/events", newEvent)
+      const res = await axios.post(
+        `${this.config.get("EVENT_BUS_URL")}/events`,
+        newEvent,
+      )
       console.log("res", res.data)
 
       return {}
